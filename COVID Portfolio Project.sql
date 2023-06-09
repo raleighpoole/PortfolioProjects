@@ -30,7 +30,8 @@ ORDER BY 1,2
 
 --Looking at countries with highest infection rate compared to population
 
-SELECT Location, population, Max (total_cases) HighestInfectionCount, MAX((total_cases/population))*100 Population_perc_contracted
+SELECT Location, population, Max (total_cases) HighestInfectionCount
+, MAX((total_cases/population))*100 Population_perc_contracted
 FROM CovidDeaths
 WHERE continent is not null
 GROUP BY Location, Population
@@ -103,20 +104,20 @@ CREATE VIEW DeathRateIfContracted as
 SELECT Location, Date, total_cases, total_deaths, (total_deaths/total_cases)*100 death_rate
 FROM CovidDeaths
 WHERE Location LIKE '%states' AND continent is not null
---ORDER BY 1,2
+ORDER BY 1,2
 
 CREATE VIEW PercentGotCovid_Mex as
 SELECT Location, Date, population, total_cases, (total_cases/population)*100 Population_perc_contracted
 FROM CovidDeaths
 WHERE continent is not null AND Location LIKE 'mexico'
---ORDER BY 1,2
+ORDER BY 1,2
 
 CREATE VIEW HighestDeathCount as
-SELECT Location, Max(cast(total_deaths as int)) TotalDeathCount
+SELECT TOP (10) Location, Max(cast(total_deaths as int)) TotalDeathCount
 FROM CovidDeaths
 WHERE continent is not null
 GROUP BY Location
---ORDER BY TotalDeathCount desc
+ORDER BY TotalDeathCount desc
 
 CREATE VIEW RollingPeopleVaccinated as
 SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
@@ -125,5 +126,5 @@ FROM CovidDeaths dea
 JOIN CovidVaccinations vac
 ON dea.location = vac.location
 AND dea.date = vac.date
-WHERE dea.continent is not null
---ORDER BY 2,3
+WHERE dea.continent = 'Europe'
+ORDER BY 2,3
